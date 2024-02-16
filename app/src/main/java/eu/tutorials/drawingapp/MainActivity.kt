@@ -4,6 +4,9 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -113,15 +116,13 @@ class MainActivity : AppCompatActivity() {
             val imageButton = view as ImageButton
             val colorTag = imageButton.tag.toString()
             drawingView?.setColor(colorTag)
-
-            imageButton.setImageDrawable(
-                ContextCompat.getDrawable(this, R.drawable.pallet_pressed)
-            )
-
+            imageButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.pallet_pressed))
             mImageButtonCurrentPaint?.setImageDrawable(
-                ContextCompat.getDrawable(this, R.drawable.pallet_normal)
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.pallet_normal
+                )
             )
-
             mImageButtonCurrentPaint = view
         }
     }
@@ -135,6 +136,21 @@ class MainActivity : AppCompatActivity() {
         } else {
             requestPermission.launch(arrayOf(Manifest.permission.READ_MEDIA_IMAGES))
         }
+    }
+
+    private fun getBitmapFromView(view: View) : Bitmap {
+        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable = view.background
+        if (bgDrawable != null) {
+            bgDrawable.draw(canvas)
+        } else {
+            canvas.drawColor(Color.WHITE)
+        }
+
+        view.draw(canvas)
+
+        return returnedBitmap
     }
 
     private fun showRationaleDialog(title: String, message: String) {
